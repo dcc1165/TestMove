@@ -33,22 +33,30 @@ def pay_period_hours(week):
     # datetime.fromisoformat requires a string formatted as "yyyy-mm-dd".  The date is
     # converted to a time tuple.  day_num is set to the number of the weekday (tm_wday).
     for day in day_range:
-        day_num = datetime.fromisoformat(f'{yy}-{mm}-{day:02}').timetuple().tm_wday
+        day_num = datetime.fromisoformat(f'{yy}-{mm:02}-{day:02}').timetuple().tm_wday
         if  day_num < 5:
             total_hours += 8
-         
+
     return total_hours
 
 # If no command-line parameters, use the current date.
 # The timetuple contains 9 values.  Only year and month are
-# required.  The rest of the values are ignored (hence the '_' characters) 
+# required.  The rest of the values are ignored (hence the '_' characters)
 if len(sys.argv) == 1:
     yy, mm, _, _, _, _, _, _, _ = datetime.now().timetuple()
 else:
     # If year/month were passed on the command line, split the string
     # in to year and month (delimited by '-')
-    yy, mm = sys.argv[1].split('-')
+    yy,mm = sys.argv[1].split('-')
+    yy = int(yy)
+    mm = int(mm)
+    if mm > 12:
+        print(f"The specified month ({mm}) must be between 1 and 12.")
+        sys.exit()
 
-# Print the hours for each pay period.
-print(f" First pay period: {pay_period_hours(1)} hours")
-print(f"second pay period: {pay_period_hours(2)} hours")
+# Print the hours for each pay period.  Month name is
+# derived from a list of month names indexed by 'mm'
+print(f"Hours for {list(calendar.month_name)[mm]} {yy}")
+print('-' * 27)
+print(f" First pay period: {pay_period_hours(1)}")
+print(f"second pay period: {pay_period_hours(2)}")
